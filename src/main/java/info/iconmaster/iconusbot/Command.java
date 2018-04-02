@@ -12,6 +12,7 @@ import info.iconmaster.iconusbot.commands.CommandHelp;
 import info.iconmaster.iconusbot.commands.CommandIncubate;
 import info.iconmaster.iconusbot.commands.CommandName;
 import info.iconmaster.iconusbot.commands.CommandRegister;
+import info.iconmaster.iconusbot.commands.CommandSource;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -43,7 +44,6 @@ public abstract class Command {
 	}
 	
 	public static void registerCommands() {
-		register(new CommandHelp());
 		register(new CommandRegister());
 		register(new CommandCritters());
 		register(new CommandCritter());
@@ -53,6 +53,9 @@ public abstract class Command {
 		
 		register(new CommandEcho());
 		register(new CommandClean());
+		
+		register(new CommandHelp());
+		register(new CommandSource());
 	}
 	
 	public boolean refuseIfNotAdmin(UserData user, IChannel channel) {
