@@ -48,7 +48,7 @@ public class UserData {
 			// ignore
 		}
 		
-		List<Critter> matches = critters.stream().filter(c->c.name != null && c.name.contains(s)).collect(Collectors.toList());
+		List<Critter> matches = critters.stream().filter(c->c.name != null && c.name.toLowerCase().contains(s.toLowerCase())).collect(Collectors.toList());
 		if (matches.size() != 1) return null;
 		
 		return matches.get(0);
