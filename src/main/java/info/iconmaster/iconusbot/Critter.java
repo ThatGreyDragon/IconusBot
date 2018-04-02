@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,12 +33,16 @@ public class Critter {
 	public LocalDateTime timeCreated;
 	public Color[] pallette;
 	public int timesIncubated;
+	public double weight;
 	
 	public Critter() {
 		this.id = UUID.randomUUID();
 		this.isEgg = true;
 		this.timeCreated = LocalDateTime.now();
 		this.pallette = new Color[] {randomColor(), randomColor(), randomColor()};
+		
+		Random r = new Random();
+		this.weight = 100.0 + r.nextDouble()*40;
 	}
 	
 	public Critter(UserData owner, JSONObject json) {
@@ -47,6 +52,7 @@ public class Critter {
 		isEgg = json.getBoolean("isEgg");
 		timeCreated = LocalDateTime.parse(json.getString("timeCreated"));
 		pallette = new Color[] {new Color(json.getJSONArray("pallette").getInt(0)), new Color(json.getJSONArray("pallette").getInt(1)), new Color(json.getJSONArray("pallette").getInt(2))};
+		weight = json.getDouble("weight");
 		
 		try {
 			name = new String(Base64.decodeBase64(json.getString("name")), "UTF-8");
@@ -68,6 +74,7 @@ public class Critter {
 		json.put("id", id.toString());
 		json.put("isEgg", isEgg);
 		json.put("timeCreated", timeCreated.toString());
+		json.put("weight", weight);
 		
 		JSONArray colorArray = new JSONArray();
 		for (Color c : pallette) {
@@ -92,6 +99,36 @@ public class Critter {
 	
 	public String getSpeciesName() {
 		return isEgg ? "Egg" : "Dragon";
+	}
+	
+	public String getWeight() {
+		return new DecimalFormat("#.#").format(weight)+" lbs";
+	}
+	
+	public String getWeightClass() {
+		if (weight < 100.0) {
+			return "Emaciated";
+		} else if (weight < 200.0) {
+			return "Lean";
+		} else if (weight < 300.0) {
+			return "Chubby";
+		} else if (weight < 400.0) {
+			return "Fat";
+		} else if (weight < 500.0) {
+			return "Morbidly Obese";
+		} else {
+			return "Blob";
+		}
+	}
+	
+	public String getImageSuffix() {
+		if (weight < 200.0) {
+			return "1";
+		} else if (weight < 400.0) {
+			return "2";
+		} else {
+			return "3";
+		}
 	}
 	
 	public static class CritterEmbed extends EmbedBuilder {
@@ -133,6 +170,10 @@ public class Critter {
 	    
 	    builder.appendField("Born On", timeCreated.format(DateTimeFormatter.ofPattern("hh:mm, dd MMM uuuu")), true);
 	    builder.appendField("Species", getSpeciesName(), true);
+	    
+	    if (!isEgg) {
+	    	builder.appendField("Weight", getWeight()+" ("+getWeightClass()+")", true);
+	    }
 	    
 	    try {
 	    	BufferedImage image = CritterImage.getCritterImage(this);

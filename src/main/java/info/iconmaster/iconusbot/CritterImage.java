@@ -17,7 +17,7 @@ public class CritterImage {
 			BufferedImage image = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = image.createGraphics();
 			
-			BufferedImage baseImage = ImageIO.read(new File(c.isEgg ? "assets/egg.png" : "assets/dragon1.png"));
+			BufferedImage baseImage = ImageIO.read(new File(c.isEgg ? "assets/egg.png" : "assets/dragon"+c.getImageSuffix()+".png"));
 			
 			for (int x = 0; x < baseImage.getWidth(); x++) {
 				for (int y = 0; y < baseImage.getHeight(); y++) {
