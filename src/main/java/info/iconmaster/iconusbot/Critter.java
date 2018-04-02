@@ -26,6 +26,8 @@ import sx.blah.discord.util.AttachmentPartEntry;
 import sx.blah.discord.util.EmbedBuilder;
 
 public class Critter {
+	public static final int MAX_MOOD = 100;
+	
 	public UUID id;
 	public String name;
 	public boolean isEgg;
@@ -34,12 +36,14 @@ public class Critter {
 	public Color[] pallette;
 	public int timesIncubated;
 	public double weight;
+	public int mood;
 	
 	public Critter() {
 		this.id = UUID.randomUUID();
 		this.isEgg = true;
 		this.timeCreated = LocalDateTime.now();
 		this.pallette = new Color[] {randomColor(), randomColor(), randomColor()};
+		this.mood = MAX_MOOD;
 		
 		Random r = new Random();
 		this.weight = 100.0 + r.nextDouble()*40;
@@ -53,6 +57,7 @@ public class Critter {
 		timeCreated = LocalDateTime.parse(json.getString("timeCreated"));
 		pallette = new Color[] {new Color(json.getJSONArray("pallette").getInt(0)), new Color(json.getJSONArray("pallette").getInt(1)), new Color(json.getJSONArray("pallette").getInt(2))};
 		weight = json.getDouble("weight");
+		mood = json.getInt("mood");
 		
 		try {
 			name = new String(Base64.decodeBase64(json.getString("name")), "UTF-8");
@@ -75,6 +80,7 @@ public class Critter {
 		json.put("isEgg", isEgg);
 		json.put("timeCreated", timeCreated.toString());
 		json.put("weight", weight);
+		json.put("mood", mood);
 		
 		JSONArray colorArray = new JSONArray();
 		for (Color c : pallette) {
@@ -131,6 +137,20 @@ public class Critter {
 		}
 	}
 	
+	public String getMoodIndicator() {
+		if (mood < 20) {
+			return ":angry:";
+		} else if (mood < 40) {
+			return ":frowning:";
+		} else if (mood < 60) {
+			return ":neutral_face:";
+		} else if (mood < 80) {
+			return ":smiley:";
+		} else {
+			return ":smile:";
+		}
+	}
+	
 	public static class CritterEmbed extends EmbedBuilder {
 		public List<AttachmentPartEntry> files = new ArrayList<>();
 	}
@@ -173,6 +193,7 @@ public class Critter {
 	    
 	    if (!isEgg) {
 	    	builder.appendField("Weight", getWeight()+" ("+getWeightClass()+")", true);
+	    	builder.appendField("Mood", getMoodIndicator(), true);
 	    }
 	    
 	    try {
