@@ -1,0 +1,12 @@
+# eclipse files
+/.gradle/
+/.settings/
+/bin/
+/build/
+/.classpath
+/.project
+
+# secret per-bot files
+/token.txt
+/admins.txt
+/userdata.json

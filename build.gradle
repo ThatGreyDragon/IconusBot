@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+// variables
+
+group = 'info.iconmaster'
+version = '0.1.0'
+
+def mainClass = 'info.iconmaster.iconusbot.IconusBot'
+def processedSrcDir = "${buildDir}/generated-src/java/main"
+
+// define sources
+
+repositories {
+	jcenter()
+	mavenCentral()
+	
+	maven {
+		url 'https://jitpack.io'
+	}
+}
+
+dependencies {
+	compile 'org.json:json:20160810'
+	compile 'com.github.austinv11:Discord4J:2.10.0'
+}
+
+// define artifacts - the .class and .java JARS
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+    
+    // uncomment the next line if you want a standalone jar
+    from configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+artifacts {
+	archives jar
+}
