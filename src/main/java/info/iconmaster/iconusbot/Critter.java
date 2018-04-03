@@ -28,6 +28,12 @@ import sx.blah.discord.util.EmbedBuilder;
 public class Critter {
 	public static final int MAX_MOOD = 100;
 	
+	public static final String STRENGTH_EMOJI = ":muscle:";
+	public static final String DEXTERITY_EMOJI = ":eye:";
+	public static final String CHARISMA_EMOJI = ":sparkles:";
+	public static final String STOMACH_EMOJI = ":meat_on_bone:";
+	public static final String METABOLISM_EMOJI = ":fire:";
+	
 	public UUID id;
 	public String name;
 	public boolean isEgg;
@@ -38,6 +44,8 @@ public class Critter {
 	public double weight;
 	public int mood;
 	
+	public int strength, dexterity, charisma, stomach, metabolism;
+	
 	public Critter() {
 		this.id = UUID.randomUUID();
 		this.isEgg = true;
@@ -47,6 +55,12 @@ public class Critter {
 		
 		Random r = new Random();
 		this.weight = 100.0 + r.nextDouble()*40;
+		
+		this.strength = 1+r.nextInt(5);
+		this.dexterity = 1+r.nextInt(5);
+		this.charisma = 1+r.nextInt(5);
+		this.stomach = 1+r.nextInt(5);
+		this.metabolism = 1+r.nextInt(5);
 	}
 	
 	public Critter(UserData owner, JSONObject json) {
@@ -58,6 +72,12 @@ public class Critter {
 		pallette = new Color[] {new Color(json.getJSONArray("pallette").getInt(0)), new Color(json.getJSONArray("pallette").getInt(1)), new Color(json.getJSONArray("pallette").getInt(2))};
 		weight = json.getDouble("weight");
 		mood = json.getInt("mood");
+		
+		strength = json.getInt("strength");
+		dexterity = json.getInt("dexterity");
+		charisma = json.getInt("charisma");
+		stomach = json.getInt("stomach");
+		metabolism = json.getInt("metabolism");
 		
 		try {
 			name = new String(Base64.decodeBase64(json.getString("name")), "UTF-8");
@@ -81,6 +101,12 @@ public class Critter {
 		json.put("timeCreated", timeCreated.toString());
 		json.put("weight", weight);
 		json.put("mood", mood);
+		
+		json.put("strength", strength);
+		json.put("dexterity", dexterity);
+		json.put("charisma", charisma);
+		json.put("stomach", stomach);
+		json.put("metabolism", metabolism);
 		
 		JSONArray colorArray = new JSONArray();
 		for (Color c : pallette) {
