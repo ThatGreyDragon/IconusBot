@@ -15,6 +15,7 @@ public class UserData {
 	
 	public IUser user;
 	public List<Critter> critters = new ArrayList<>();
+	public List<ItemStack> items = new ArrayList<>();
 	public boolean registered;
 	public int energy, maxEnergy;
 	
@@ -28,6 +29,10 @@ public class UserData {
 			
 			for (Object obj : json.getJSONArray("critters")) {
 				critters.add(new Critter(this, (JSONObject) obj));
+			}
+			
+			for (Object obj : json.getJSONArray("items")) {
+				items.add(Item.load(this, (JSONObject) obj));
 			}
 		} else {
 			registered = false;
@@ -45,6 +50,10 @@ public class UserData {
 		JSONArray crittersJson = new JSONArray();
 		critters.forEach((c)->crittersJson.put(c.save()));
 		json.put("critters", crittersJson);
+		
+		JSONArray itemsJson = new JSONArray();
+		items.forEach((i)->itemsJson.put(i.save()));
+		json.put("items", itemsJson);
 		
 		return json;
 	}

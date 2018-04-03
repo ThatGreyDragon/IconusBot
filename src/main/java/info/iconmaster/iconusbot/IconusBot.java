@@ -39,6 +39,7 @@ public class IconusBot {
 	// main function
 	public static void main(String[] args) {
 		Command.registerCommands();
+		Item.registerItems();
 		
 		System.out.println("Connecting...");
 		
