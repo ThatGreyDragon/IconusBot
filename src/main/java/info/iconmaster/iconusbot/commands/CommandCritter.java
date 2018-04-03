@@ -56,11 +56,11 @@ public class CommandCritter extends Command {
 			
 			sb.append("**Stats**\n");
 			
-			sb.append("\tStrength: "); sb.append(Utils.repeatString(Critter.STRENGTH_EMOJI, c.strength)); sb.append("\n");
-			sb.append("\tDexterity: "); sb.append(Utils.repeatString(Critter.DEXTERITY_EMOJI, c.dexterity)); sb.append("\n");
-			sb.append("\tCharisma: "); sb.append(Utils.repeatString(Critter.CHARISMA_EMOJI, c.charisma)); sb.append("\n");
-			sb.append("\tStomach: "); sb.append(Utils.repeatString(Critter.STOMACH_EMOJI, c.stomach)); sb.append("\n");
-			sb.append("\tMetabolism: "); sb.append(Utils.repeatString(Critter.METABOLISM_EMOJI, c.metabolism)); sb.append("\n");
+			sb.append("\tStrength: "); sb.append(Utils.repeatEmoji(Critter.STRENGTH_EMOJI, c.strength)); sb.append("\n");
+			sb.append("\tDexterity: "); sb.append(Utils.repeatEmoji(Critter.DEXTERITY_EMOJI, c.dexterity)); sb.append("\n");
+			sb.append("\tCharisma: "); sb.append(Utils.repeatEmoji(Critter.CHARISMA_EMOJI, c.charisma)); sb.append("\n");
+			sb.append("\tStomach: "); sb.append(Utils.repeatEmoji(Critter.STOMACH_EMOJI, c.stomach)); sb.append("\n");
+			sb.append("\tMetabolism: "); sb.append(Utils.repeatEmoji(Critter.METABOLISM_EMOJI, c.metabolism)); sb.append("\n");
 		}
 		
 		IconusBot.INSTANCE.sendMessage(channel, sb.toString(), c.getEmbed());

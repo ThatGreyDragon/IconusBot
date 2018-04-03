@@ -3,16 +3,7 @@ package info.iconmaster.iconusbot;
 import java.util.HashMap;
 import java.util.Map;
 
-import info.iconmaster.iconusbot.commands.CommandClean;
-import info.iconmaster.iconusbot.commands.CommandCritter;
-import info.iconmaster.iconusbot.commands.CommandCritters;
-import info.iconmaster.iconusbot.commands.CommandEcho;
-import info.iconmaster.iconusbot.commands.CommandHatch;
-import info.iconmaster.iconusbot.commands.CommandHelp;
-import info.iconmaster.iconusbot.commands.CommandIncubate;
-import info.iconmaster.iconusbot.commands.CommandName;
-import info.iconmaster.iconusbot.commands.CommandRegister;
-import info.iconmaster.iconusbot.commands.CommandSource;
+import info.iconmaster.iconusbot.commands.*;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -50,9 +41,11 @@ public abstract class Command {
 		register(new CommandIncubate());
 		register(new CommandHatch());
 		register(new CommandName());
+		register(new CommandEnergy());
 		
 		register(new CommandEcho());
 		register(new CommandClean());
+		register(new CommandReload());
 		
 		register(new CommandHelp());
 		register(new CommandSource());
@@ -96,6 +89,18 @@ public abstract class Command {
 	public boolean refuseIfCritterLookupFailed(IChannel channel, UserData user, Critter c, String s) {
 		if (c == null) {
 			IconusBot.INSTANCE.sendMessage(channel, user.getName()+": Critter name '"+s+"' unknown or ambiguous. Use `!critters` to get a list of critters.");
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean refuseIfNotEnoughEnergy(IChannel channel, UserData user, int n) {
+		if (n == 0) return false;
+		
+		if (n > user.energy) {
+			IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You do not have enough "+UserData.ENERGY_EMOJI+" to perform this action!\n"
+					+ "It requires "+Utils.repeatEmoji(UserData.ENERGY_EMOJI, n)+", but you only have "+Utils.repeatEmoji(UserData.ENERGY_EMOJI, user.energy)+".");
 			return true;
 		}
 		

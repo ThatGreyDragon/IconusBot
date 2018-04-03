@@ -10,4 +10,12 @@ public class Utils {
 		}
 		return sb.toString();
 	}
+	
+	public static String repeatEmoji(String s, int n) {
+		if (n > 8) {
+			return n+" "+s;
+		} else {
+			return repeatString(s, n);
+		}
+	}
 }

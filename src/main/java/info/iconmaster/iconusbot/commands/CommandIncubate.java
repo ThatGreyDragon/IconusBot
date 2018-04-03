@@ -7,6 +7,8 @@ import info.iconmaster.iconusbot.UserData;
 import sx.blah.discord.handle.obj.IChannel;
 
 public class CommandIncubate extends Command {
+	
+	public static final int ENERGY_COST = 6;
 
 	public CommandIncubate() {
 		super("incubate", "Incubate a critter egg", "USAGE: !incubate *name*\n"
@@ -25,9 +27,11 @@ public class CommandIncubate extends Command {
 			return;
 		}
 		
+		if (refuseIfNotEnoughEnergy(channel, user, ENERGY_COST)) return;
+		
 		c.timesIncubated++;
 		IconusBot.INSTANCE.writeUserData();
 		
-		IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You give your egg some much-needed warmph, speeding up the hatcing process.", c.getEmbed());
+		IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You give your egg some much-needed warmph, speeding up the hatcing process."+user.expendEnergy(ENERGY_COST), c.getEmbed());
 	}
 }
