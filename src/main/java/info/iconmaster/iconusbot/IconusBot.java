@@ -289,6 +289,7 @@ public class IconusBot {
 		for (UserData user : userdata.values()) {
 			user.energy = user.maxEnergy;
 		}
+		writeUserData();
 		
 		for (IChannel channel : announcmentChannels()) {
 			doNewDay(channel);
