@@ -116,7 +116,6 @@ public class IconusBot {
 		dailyTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				System.out.println(LocalTime.now());
 				LocalTime rollover = rolloverTime();
 				LocalTime now = LocalTime.now();
 				if (now.getHour() == rollover.getHour() && now.getMinute() == rollover.getMinute()) {
