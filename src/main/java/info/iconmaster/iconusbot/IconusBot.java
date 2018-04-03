@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,10 +76,12 @@ public class IconusBot {
 	public IDiscordClient client;
 	public Set<String> admins;
 	public Map<String, UserData> userdata;
+	public JSONObject settings;
+	public Timer dailyTimer;
 	
 	public IconusBot(String token) {
+		// connect to Discord
 		this.client = new ClientBuilder().withToken(token).build();
-
 		client.getDispatcher().registerListener(new Object() {
 			@EventSubscriber
 			public void onMessageReceived(MessageReceivedEvent event) {
@@ -86,13 +91,13 @@ public class IconusBot {
 						String[] args = content.substring(1).split(" ");
 						doCommand(event.getAuthor(), event.getChannel(), args);
 					} catch (Throwable e) {
-						System.out.println("An error occured in parsing a message: ");
+						System.err.println("An error occured in parsing a message: ");
 						e.printStackTrace();
 						
 						try {
 							sendMessage(event.getChannel(), "Sorry, an internal error occured. Try again?");
 						} catch (Throwable e2) {
-							System.out.println("An error occured in handling an error that occured while parsing a message: ");
+							System.err.println("An error occured in handling an error that occured while parsing a message: ");
 							e2.printStackTrace();
 						}
 					}
@@ -100,9 +105,25 @@ public class IconusBot {
 			}
 		});
 		client.login();
-		
 		while (!client.isReady()) {}
+		
+		// load settings
+		loadSettings();
 		readUserData();
+		
+		// setup daily events
+		dailyTimer = new Timer("IconusBotDailyTimer", true);
+		dailyTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				System.out.println(LocalTime.now());
+				LocalTime rollover = rolloverTime();
+				LocalTime now = LocalTime.now();
+				if (now.getHour() == rollover.getHour() && now.getMinute() == rollover.getMinute()) {
+					doNewDay();
+				}
+			}
+		}, 0, 1000*60);
 	}
 	
 	public IMessage sendMessage(IChannel channel, String message) {
@@ -177,7 +198,7 @@ public class IconusBot {
 					// do nothing
 				}
 				
-				userdata.put(key, new UserData(client.fetchUser(Long.parseLong(key)), usermap));
+				userdata.put(key, new UserData(client.fetchUser(Long.parseUnsignedLong(key)), usermap));
 			}
 			
 			System.out.println("Successfully read userdata at "+file.getCanonicalPath()+".");
@@ -225,7 +246,7 @@ public class IconusBot {
 	
 	public IUser lookupUser(IChannel channel, String s) {
 		try {
-			IUser user = client.fetchUser(Long.parseLong(s));
+			IUser user = client.fetchUser(Long.parseUnsignedLong(s));
 			if (user != null) {
 				return user;
 			}
@@ -263,5 +284,70 @@ public class IconusBot {
 		}
 		
 		command.execute(userdata, channel, Arrays.copyOfRange(args, 1, args.length));
+	}
+	
+	public void doNewDay() {
+		for (UserData user : userdata.values()) {
+			user.energy = user.maxEnergy;
+		}
+		
+		for (IChannel channel : announcmentChannels()) {
+			doNewDay(channel);
+		}
+	}
+	
+	public void doNewDay(IChannel channel) {
+		sendMessage(channel, "**It's a brand new day!**\nEveryone's "+UserData.ENERGY_EMOJI+" has been restored. Carpe diem!");
+	}
+	
+	public void loadSettings() {
+		File settingsFile = new File("settings.json");
+		if (!settingsFile.exists()) {
+			try {
+				System.out.println("settings.json not found. Copying it over from defaults...");
+				Files.copy(new File("settings.default.json").toPath(), settingsFile.toPath());
+			} catch (IOException e) {
+				System.err.println("An error occured while copying settings.default.json:");
+				e.printStackTrace();
+				return;
+			}
+		}
+		
+		try {
+			FileInputStream fis = new FileInputStream(settingsFile);
+			byte[] data = new byte[(int) settingsFile.length()];
+			fis.read(data);
+			fis.close();
+			settings = new JSONObject(new String(data));
+		} catch (IOException e) {
+			System.err.println("An error occured while reading settings.json:");
+			e.printStackTrace();
+			return;
+		}
+		
+		System.out.println("Successfuly read settings.json.");
+	}
+	
+	public Set<IChannel> announcmentChannels() {
+		Set<IChannel> set = new HashSet<>();
+		
+		for (Object item : settings.getJSONArray("announcmentChannels")) {
+			if (item instanceof String) {
+				IChannel c = client.getChannelByID(Long.parseUnsignedLong((String) item));
+				if (c == null) {
+					throw new IllegalArgumentException("Nonexistent channel in announcmentChannels: "+item);
+				}
+				set.add(c);
+			} else {
+				throw new IllegalArgumentException("Unexpected item in announcmentChannels of "+item.getClass());
+			}
+		}
+		
+		return set;
+	}
+	
+	public LocalTime rolloverTime() {
+		String s = settings.getString("rolloverTime");
+		return LocalTime.parse(s);
 	}
 }

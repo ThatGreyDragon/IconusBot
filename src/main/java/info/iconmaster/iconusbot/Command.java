@@ -46,6 +46,7 @@ public abstract class Command {
 		register(new CommandEcho());
 		register(new CommandClean());
 		register(new CommandReload());
+		register(new CommandNewDay());
 		
 		register(new CommandHelp());
 		register(new CommandSource());
