@@ -95,4 +95,16 @@ public class ItemStack {
 		
 		IconusBot.INSTANCE.writeUserData();
 	}
+	
+	public ItemStack split(int n) {
+		if (n == stackSize || !stackable()) {
+			return this;
+		} else {
+			ItemStack split = new ItemStack(item, n);
+			stackSize -= n;
+			
+			IconusBot.INSTANCE.writeUserData();
+			return split;
+		}
+	}
 }

@@ -18,8 +18,11 @@ public class ItemFood extends Item {
 	
 	@Override
 	public void use(ItemStack stack, IChannel channel, UserData user, Critter critter) {
+		String msg = user.getName()+": "+critter.getName()+" ate the "+toString(stack)+" right up!";
+		
 		critter.weight += weight;
 		stack.reduceStackSize(1);
-		IconusBot.INSTANCE.sendMessage(channel, user.getName()+": "+critter.getName()+" ate the "+toString(stack)+" right up!", critter.getEmbed());
+		
+		IconusBot.INSTANCE.sendMessage(channel, msg, critter.getEmbed());
 	}
 }

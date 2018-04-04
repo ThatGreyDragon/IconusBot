@@ -39,6 +39,6 @@ public class CommandUse extends Command {
 			}
 		}
 		
-		i.use(channel, user, c);
+		i.split(1).use(channel, user, c);
 	}
 }
