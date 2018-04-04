@@ -20,6 +20,6 @@ public class ItemFood extends Item {
 	public void use(ItemStack stack, IChannel channel, UserData user, Critter critter) {
 		critter.weight += weight;
 		stack.reduceStackSize(1);
-		IconusBot.INSTANCE.sendMessage(channel, user.getName()+": "+critter.getName()+" ate it right up!", critter.getEmbed());
+		IconusBot.INSTANCE.sendMessage(channel, user.getName()+": "+critter.getName()+" ate the "+toString(stack)+" right up!", critter.getEmbed());
 	}
 }

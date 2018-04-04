@@ -48,7 +48,7 @@ public class Item {
 	}
 	
 	public String toString(ItemStack item) {
-		return icon(item)+" **"+name(item)+(stackable(item) ? (" x "+item.stackSize) : "")+"**";
+		return icon(item)+" **"+name(item)+((stackable(item) && item.stackSize != 1) ? (" x "+item.stackSize) : "")+"**";
 	}
 
 	public JSONObject save(ItemStack item) {

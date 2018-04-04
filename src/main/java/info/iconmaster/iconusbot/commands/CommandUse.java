@@ -29,12 +29,12 @@ public class CommandUse extends Command {
 		
 		if (c != null) {
 			if (!i.usableOnCritter() && !i.edible()) {
-				IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You can't give this to your critter!");
+				IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You can't give "+i.toString()+" to your critter!");
 				return;
 			}
 		} else {
 			if (!i.usable()) {
-				IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You can't use this item!"+(i.usableOnCritter() || i.edible() ? " But maybe a critter can..." : ""));
+				IconusBot.INSTANCE.sendMessage(channel, user.getName()+": You can't use "+i.toString()+"!"+(i.usableOnCritter() || i.edible() ? " But maybe a critter can..." : ""));
 				return;
 			}
 		}
