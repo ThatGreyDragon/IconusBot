@@ -1,6 +1,10 @@
 package info.iconmaster.iconusbot;
 
+import java.util.Optional;
+
 import org.json.JSONObject;
+
+import sx.blah.discord.handle.obj.IChannel;
 
 public class ItemStack {
 	public Item item;
@@ -40,6 +44,12 @@ public class ItemStack {
 	public boolean usable() {
 		return item.usable(this);
 	}
+	public boolean usableOnCritter() {
+		return item.usableOnCritter(this);
+	}
+	public boolean edible() {
+		return item.edible(this);
+	}
 	
 	public JSONObject save() {
 		return item.save(this);
@@ -48,5 +58,41 @@ public class ItemStack {
 	@Override
 	public String toString() {
 		return item.toString(this);
+	}
+	
+	public void use(IChannel channel, UserData user, Critter critter) {
+		item.use(this, channel, user, critter);
+	}
+	
+	public void reduceStackSize(int n) {
+		stackSize -= n;
+		if (stackSize <= 0 && owner != null) {
+			owner.items.remove(this);
+		}
+		IconusBot.INSTANCE.writeUserData();
+	}
+	
+	public void removeFromInventory() {
+		if (owner == null) return;
+		owner.items.remove(this);
+		owner = null;
+		
+		IconusBot.INSTANCE.writeUserData();
+	}
+	
+	public void giveTo(UserData user) {
+		if (owner != null) {
+			owner.items.remove(this);
+		}
+		owner = user;
+		
+		Optional<ItemStack> existingStack = owner.items.stream().filter(stack->stack.item == this.item).findFirst();
+		if (!stackable() || !existingStack.isPresent()) {
+			owner.items.add(this);
+		} else {
+			existingStack.get().stackSize += this.stackSize;
+		}
+		
+		IconusBot.INSTANCE.writeUserData();
 	}
 }

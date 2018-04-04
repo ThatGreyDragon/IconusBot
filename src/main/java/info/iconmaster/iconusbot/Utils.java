@@ -12,7 +12,7 @@ public class Utils {
 	}
 	
 	public static String repeatEmoji(String s, int n) {
-		if (n > 8) {
+		if (n < 1 || n > 8) {
 			return n+" "+s;
 		} else {
 			return repeatString(s, n);

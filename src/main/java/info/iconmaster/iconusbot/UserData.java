@@ -74,6 +74,22 @@ public class UserData {
 		return matches.get(0);
 	}
 	
+	public ItemStack lookupItem(String s) {
+		try {
+			int asInt = Integer.parseUnsignedInt(s);
+			if (asInt >= 1 && asInt <= items.size()) {
+				return items.get(asInt-1);
+			}
+		} catch (NumberFormatException ex) {
+			// ignore
+		}
+		
+		List<ItemStack> matches = items.stream().filter(i->i.name() != null && i.name().toLowerCase().contains(s.toLowerCase())).collect(Collectors.toList());
+		if (matches.size() != 1) return null;
+		
+		return matches.get(0);
+	}
+	
 	public String getName() {
 		return user.getName();
 	}

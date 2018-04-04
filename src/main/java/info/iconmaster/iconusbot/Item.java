@@ -5,10 +5,13 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import info.iconmaster.iconusbot.items.ItemFood;
+import sx.blah.discord.handle.obj.IChannel;
+
 public class Item {
 	public String id;
 	protected String icon, name, desc;
-	protected boolean stackable, usable;
+	protected boolean stackable, usable, usableOnCritter, edible;
 	
 	public Item(String id) {
 		this.id = id;
@@ -37,6 +40,12 @@ public class Item {
 	public boolean usable(ItemStack item) {
 		return usable;
 	}
+	public boolean usableOnCritter(ItemStack item) {
+		return usableOnCritter;
+	}
+	public boolean edible(ItemStack item) {
+		return edible;
+	}
 	
 	public String toString(ItemStack item) {
 		return icon(item)+" **"+name(item)+(stackable(item) ? (" x "+item.stackSize) : "")+"**";
@@ -62,7 +71,7 @@ public class Item {
 	public static ItemStack load(UserData owner, JSONObject json) {
 		String id = json.getString("id");
 		Item item = registry.get(id);
-		ItemStack stack = new ItemStack(item);
+		ItemStack stack = new ItemStack(owner, item);
 		item.load(stack, json);
 		return stack;
 	}
@@ -72,6 +81,11 @@ public class Item {
 	}
 	
 	public static void registerItems() {
-		register(new Item("test", ":tools:", "Test Item", "This is a (possibly quite long) test description.", true));
+		register(new ItemFood("apple", ":apple:", "Apple", "A juicy red apple.", 1.5));
+		register(new ItemFood("pear", ":pear:", "Pear", "A juicy green pear.", 3.14159));
+	}
+	
+	public void use(ItemStack stack, IChannel channel, UserData user, Critter critter) {
+		throw new UnsupportedOperationException("This item needs a handler for being used!");
 	}
 }

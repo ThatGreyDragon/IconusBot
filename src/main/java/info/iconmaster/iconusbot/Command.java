@@ -43,6 +43,8 @@ public abstract class Command {
 		register(new CommandName());
 		register(new CommandEnergy());
 		register(new CommandItems());
+		register(new CommandUse());
+		register(new CommandGather());
 		
 		register(new CommandEcho());
 		register(new CommandClean());
@@ -91,6 +93,15 @@ public abstract class Command {
 	public boolean refuseIfCritterLookupFailed(IChannel channel, UserData user, Critter c, String s) {
 		if (c == null) {
 			IconusBot.INSTANCE.sendMessage(channel, user.getName()+": Critter name '"+s+"' unknown or ambiguous. Use `!critters` to get a list of critters.");
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean refuseIfItemLookupFailed(IChannel channel, UserData user, ItemStack i, String s) {
+		if (i == null) {
+			IconusBot.INSTANCE.sendMessage(channel, user.getName()+": The item called '"+s+"' is not in your inventory, unknown, or ambiguous. Use `!items` to get a list of items you own.");
 			return true;
 		}
 		

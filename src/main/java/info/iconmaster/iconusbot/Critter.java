@@ -250,4 +250,8 @@ public class Critter {
 	public boolean readyToHatch() {
 		return getPercentHatched() >= 1.0;
 	}
+	
+	public String getName() {
+		return name == null ? "the critter" : name;
+	}
 }
